@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodLoop — Good Food. No Waste. | Smart Food Rescue Platform</title>
+  <meta name="description" content="Connecting college hostels, restaurants, bakeries, and banquets with verified NGOs and volunteer squads to redistribute safe surplus food before it goes to waste.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+  <meta name="theme-color" content="#10b981">
+
+  <!-- Open Graph Meta Tags for WhatsApp & Social Media Preview Cards -->
+  <meta property="og:title" content="FoodLoop — Good Food. No Waste.">
+  <meta property="og:description" content="Smart Food Rescue Platform: Connecting college messes, restaurants & banquets with NGOs to redistribute surplus food before it expires.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=1200&auto=format&fit=crop&q=80">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet Interactive Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-notice-bar">
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+      <div>
+        <span>🎓 <strong>B.Tech Internet Programming (IP) Project Pilot:</strong> FoodLoop — Zero Surplus Food Waste Network</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <a href="javascript:void(0)" onclick="openProjectSpecsModal()">📋 Project Viva Specs & Architecture</a>
+        <span style="opacity:0.6;">|</span>
+        <span id="activeRoleBadge" class="role-badge-pill" style="cursor:pointer;" onclick="openRoleSwitcherModal()">
+          👤 GUEST
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="javascript:void(0)" onclick="switchMainTab('explore')" class="brand-logo">
+        <div class="brand-logo-icon">🌿</div>
+        <div>
+          <span>FoodLoop</span>
+          <span class="brand-logo-tagline">Good Food. No Waste.</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <ul class="nav-links">
+        <li>
+          <a href="javascript:void(0)" class="nav-link active" data-tab="explore" onclick="switchMainTab('explore')">
+            🔍 Explore Food
+          </a>
+        </li>
+        <li>
+          <a href="javascript:void(0)" class="nav-link" onclick="openDonateModal()">
+            ➕ Donate Food
+          </a>
+        </li>
+        <li id="donorNavTab" style="display:none;">
+          <a href="javascript:void(0)" class="nav-link" data-tab="donor" onclick="switchMainTab('donor')">
+            🍳 Donor Portal
+          </a>
+        </li>
+        <li id="volunteerNavTab" style="display:none;">
+          <a href="javascript:void(0)" class="nav-link" data-tab="volunteer" onclick="switchMainTab('volunteer')">
+            🚴 Rescues & Pickups
+          </a>
+        </li>
+        <li id="adminNavTab" style="display:none;">
+          <a href="javascript:void(0)" class="nav-link" data-tab="admin" onclick="switchMainTab('admin')">
+            👑 Admin Console
+          </a>
+        </li>
+        <li>
+          <a href="javascript:void(0)" class="nav-link" data-tab="safety" onclick="switchMainTab('safety')">
+            🛡️ Safety & FAQ
+          </a>
+        </li>
+      </ul>
+
+      <!-- User Controls & Fast Demo Switcher -->
+      <div class="nav-actions" id="navUserControls">
+        <!-- Injected dynamically by auth.js -->
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       VIEW: EXPLORE (Homepage, Search, Real Leaflet Map & Food Listings)
+       ========================================================================== -->
+  <main id="viewExplore">
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-tag">
+              <span class="pulse-dot"></span>
+              Live Hyper-Local Surplus Food Rescue Radar
+            </div>
+            <h1 class="hero-title">
+              Rescue Safe Food.<br>
+              <span class="highlight-green">Feed People.</span><br>
+              Protect Our Planet.
+            </h1>
+            <p class="hero-description">
+              FoodLoop connects college hostel messes, restaurants, banquet halls, and bakeries with verified NGOs and volunteer squads to safely redistribute edible surplus food before it goes to waste.
+            </p>
+
+            <div class="hero-cta-group">
+              <button class="btn btn-primary btn-lg" onclick="openDonateModal()">
+                ➕ Donate Surplus Food
+              </button>
+              <button class="btn btn-outline btn-lg" onclick="document.getElementById('listingsSection').scrollIntoView({ behavior: 'smooth' })">
+                🔍 Find Food Radar
+              </button>
+              <button class="btn btn-outline btn-lg" onclick="switchDemoRole('ngo')">
+                🤝 Join as NGO
+              </button>
+              <button class="btn btn-accent btn-lg" onclick="switchDemoRole('volunteer')">
+                🚴 Volunteer Now
+              </button>
+            </div>
+
+            <div class="hero-trust-badges">
+              <div class="trust-badge-item">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>FSSAI Safe Food Surplus Protocol</span>
+              </div>
+              <div class="trust-badge-item">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>100% Free &amp; Non-Profit</span>
+              </div>
+              <div class="trust-badge-item">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>Real Leaflet GPS Map Routing</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Visual Widget: Urgent Radar Card -->
+          <div>
+            <div class="hero-visual-card">
+              <div class="radar-header">
+                <div class="radar-title">
+                  <span>📡</span>
+                  <span>Active Campus &amp; City Radar</span>
+                </div>
+                <span class="radar-badge">
+                  <span class="pulse-dot" style="background:#f43f5e; width:6px; height:6px;"></span>
+                  LIVE FEED
+                </span>
+              </div>
+
+              <!-- Top Urgent Food Highlights -->
+              <div class="radar-urgent-item" onclick="flyToDonation(12.9352, 77.6245, 1)" style="cursor:pointer;">
+                <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200" class="radar-food-thumb" alt="Biryani">
+                <div class="radar-food-info">
+                  <h4>Campus Central Mess Veg Biryani</h4>
+                  <div class="radar-food-meta">
+                    <span>👥 75 Meals</span>
+                    <span>📍 NIT Campus Gate 2</span>
+                  </div>
+                </div>
+                <span class="countdown-pill">⏳ 2h 30m</span>
+              </div>
+
+              <div class="radar-urgent-item" onclick="flyToDonation(12.9698, 77.6033, 4)" style="cursor:pointer; background:#fff7ed; border-color:#fed7aa;">
+                <img src="https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=200" class="radar-food-thumb" alt="Chicken Biryani">
+                <div class="radar-food-info">
+                  <h4>Taj Gateway Chicken Dum Biryani</h4>
+                  <div class="radar-food-meta">
+                    <span>👥 50 Meals</span>
+                    <span>📍 Residency Road</span>
+                  </div>
+                </div>
+                <span class="countdown-pill" style="background:#f59e0b;">⏳ 3h 00m</span>
+              </div>
+
+              <div style="background:#f8fafc; border-radius:1rem; padding:0.85rem 1rem; font-size:0.825rem; color:#475569; display:flex; justify-content:space-between; align-items:center;">
+                <span>⚡ Real-time Volunteer dispatch active</span>
+                <button class="btn btn-primary btn-sm" onclick="switchDemoRole('volunteer')">
+                  Accept Pickup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Search & Filter Hero Bar -->
+        <div class="search-filter-card">
+          <div class="search-filter-grid">
+            <div class="search-input-wrap">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="foodSearchInput" placeholder="Search by food name, donor mess, hotel, or allergens...">
+            </div>
+
+            <div class="select-wrap">
+              <select id="foodCategorySelect">
+                <option value="all">🍽️ All Food Categories (12)</option>
+                <option value="rice_biryani">🍚 Rice, Biryani &amp; Pulao</option>
+                <option value="roti_breads">🫓 Chapati, Roti &amp; Naan</option>
+                <option value="curry_dal">🍲 Dal, Curry &amp; Sambar</option>
+                <option value="breakfast_tiffin">🥞 Idli, Dosa &amp; Breakfast</option>
+                <option value="meal_boxes">🍱 Veg &amp; Non-Veg Meal Boxes</option>
+                <option value="fruits_veggies">🍎 Fruits &amp; Fresh Vegetables</option>
+                <option value="bakery_desserts">🥐 Bread, Cakes &amp; Bakery</option>
+                <option value="packaged_snacks">🥨 Packaged Snacks &amp; Sealed</option>
+                <option value="dairy_beverages">🥛 Milk, Dairy &amp; Drinks</option>
+                <option value="event_surplus">🎊 Wedding &amp; Banquet Surplus</option>
+                <option value="hostel_canteen">🎓 College Hostel &amp; Canteen</option>
+                <option value="dry_groceries">🌾 Dry Groceries &amp; Staples</option>
+              </select>
+            </div>
+
+            <div class="select-wrap">
+              <select id="foodDietarySelect">
+                <option value="all">🥗 All Dietary Types</option>
+                <option value="veg">🥬 Veg Only</option>
+                <option value="non_veg">🍗 Non-Veg</option>
+                <option value="vegan">🌱 Vegan</option>
+                <option value="egg">🥚 Egg</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary" onclick="loadDonations()">
+              🔍 Find Surplus Food
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Impact Dashboard Section (With Clear Demo Disclaimer) -->
+    <section class="impact-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Collective Impact</span>
+          <h2 class="section-title">Turning Food Waste into Hope</h2>
+          <p class="section-subtitle">
+            Real-time redistribution metrics across partner campus messes, banquets, NGOs, and student volunteer networks.
+          </p>
+          <div class="demo-stats-notice">
+            <span>ℹ️</span>
+            <span><strong>Live Demo Platform Metrics:</strong> Simulated university &amp; urban cluster redistribution trial.</span>
+          </div>
+        </div>
+
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="impact-icon-wrap">🍛</div>
+            <div class="impact-number" id="impactMealsCount">14,850</div>
+            <div class="impact-label">Meals Rescued</div>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon-wrap">⚖️</div>
+            <div class="impact-number" id="impactKgCount">6,420</div>
+            <div class="impact-label">Kilograms Food Saved</div>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon-wrap">🌍</div>
+            <div class="impact-number" id="impactCo2Count">15,800</div>
+            <div class="impact-label">kg CO₂e Emissions Prevented</div>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon-wrap">🏛️</div>
+            <div class="impact-number" id="impactNgoCount">38</div>
+            <div class="impact-label">Partner NGOs &amp; Shelters</div>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon-wrap">🚴</div>
+            <div class="impact-number" id="impactVolCount">210</div>
+            <div class="impact-label">Active Volunteer Rescuers</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Food Categories Horizontal Pill Scroller -->
+    <section class="categories-section">
+      <div class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a;">Categories of Safe Surplus Food</h3>
+          <span style="font-size:0.8rem; color:#64748b;">12 Categories Supported</span>
+        </div>
+
+        <div class="category-scroll-container">
+          <button class="cat-pill active" data-category="all" onclick="setCategoryFilter('all')">
+            <span class="emoji">✨</span> All Categories
+          </button>
+          <button class="cat-pill" data-category="rice_biryani" onclick="setCategoryFilter('rice_biryani')">
+            <span class="emoji">🍚</span> Rice, Biryani &amp; Pulao
+          </button>
+          <button class="cat-pill" data-category="roti_breads" onclick="setCategoryFilter('roti_breads')">
+            <span class="emoji">🫓</span> Chapati, Roti &amp; Naan
+          </button>
+          <button class="cat-pill" data-category="curry_dal" onclick="setCategoryFilter('curry_dal')">
+            <span class="emoji">🍲</span> Dal, Curry &amp; Sambar
+          </button>
+          <button class="cat-pill" data-category="breakfast_tiffin" onclick="setCategoryFilter('breakfast_tiffin')">
+            <span class="emoji">🥞</span> Idli, Dosa &amp; Breakfast
+          </button>
+          <button class="cat-pill" data-category="meal_boxes" onclick="setCategoryFilter('meal_boxes')">
+            <span class="emoji">🍱</span> Veg &amp; Non-Veg Meal Boxes
+          </button>
+          <button class="cat-pill" data-category="fruits_veggies" onclick="setCategoryFilter('fruits_veggies')">
+            <span class="emoji">🍎</span> Fruits &amp; Vegetables
+          </button>
+          <button class="cat-pill" data-category="bakery_desserts" onclick="setCategoryFilter('bakery_desserts')">
+            <span class="emoji">🥐</span> Bread, Cakes &amp; Bakery
+          </button>
+          <button class="cat-pill" data-category="packaged_snacks" onclick="setCategoryFilter('packaged_snacks')">
+            <span class="emoji">🥨</span> Packaged Snacks
+          </button>
+          <button class="cat-pill" data-category="dairy_beverages" onclick="setCategoryFilter('dairy_beverages')">
+            <span class="emoji">🥛</span> Milk &amp; Dairy Products
+          </button>
+          <button class="cat-pill" data-category="event_surplus" onclick="setCategoryFilter('event_surplus')">
+            <span class="emoji">🎊</span> Wedding &amp; Banquet Surplus
+          </button>
+          <button class="cat-pill" data-category="hostel_canteen" onclick="setCategoryFilter('hostel_canteen')">
+            <span class="emoji">🎓</span> Hostel &amp; Canteen Meals
+          </button>
+          <button class="cat-pill" data-category="dry_groceries" onclick="setCategoryFilter('dry_groceries')">
+            <span class="emoji">🌾</span> Dry Groceries &amp; Staples
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Urgent Food Banner Ticker -->
+    <div class="container" style="margin-bottom:1.5rem;" id="urgentFoodBanner">
+      <!-- Injected dynamically if urgent food items exist -->
+    </div>
+
+    <!-- ==========================================================================
+         Real Interactive Map & Food Listings Split View Section
+         ========================================================================== -->
+    <section class="container" id="listingsSection" style="padding-bottom:3rem;">
+      
+      <!-- Listings Header & View Controls -->
+      <div class="listings-view-header">
+        <div>
+          <h2 style="font-size:1.75rem; font-weight:800; color:#0f172a; margin-bottom:0.25rem;">
+            Surplus Food Available Now
+          </h2>
+          <p id="foodResultCount" style="font-size:0.875rem; color:#64748b;">
+            Scanning available meals...
+          </p>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" id="urgentFilterBtn" onclick="toggleUrgentOnly()">
+            ⚡ Expiring Soon (&lt; 3h)
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="requestUserLocation(true)">
+            📍 Locate Me (GPS)
+          </button>
+          
+          <div class="view-mode-toggle">
+            <button class="view-mode-btn active" data-mode="split" onclick="setViewMode('split')">
+              Split View
+            </button>
+            <button class="view-mode-btn" data-mode="grid" onclick="setViewMode('grid')">
+              Cards Only
+            </button>
+            <button class="view-mode-btn" data-mode="map" onclick="setViewMode('map')">
+              Map Only
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Split Layout Container -->
+      <div class="split-view-wrapper" id="splitViewWrapper">
+        
+        <!-- Left Column: Scrollable Food Cards -->
+        <div class="food-cards-scroll-col" id="foodCardsCol">
+          <div id="foodCardsList">
+            <!-- Cards rendered here dynamically by app.js -->
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Leaflet & OpenStreetMap Container -->
+        <div class="map-sticky-col" id="foodMapCol">
+          <div class="map-control-banner">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="map-badge-real">🗺️ OpenStreetMap &amp; Leaflet</span>
+              <span style="color:#64748b; font-size:0.75rem;">Live Real Geolocation</span>
+            </div>
+            <div style="display:flex; gap:0.4rem;">
+              <button class="btn btn-outline btn-sm" style="padding:2px 8px; font-size:0.75rem;" onclick="requestUserLocation(true)">
+                My GPS
+              </button>
+              <button class="btn btn-outline btn-sm" style="padding:2px 8px; font-size:0.75rem;" onclick="foodMap.setView([12.9716, 77.5946], 12)">
+                Reset View
+              </button>
+            </div>
+          </div>
+          <div id="foodMap"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section style="background:#ffffff; padding:4rem 0; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0;">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Redistribution Workflow</span>
+          <h2 class="section-title">How FoodLoop Works in 4 Steps</h2>
+          <p class="section-subtitle">
+            A frictionless closed loop designed for university campuses, catering hubs, and municipal rescue operations.
+          </p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:2rem;">
+          <div style="background:#f8fafc; border-radius:1.5rem; padding:1.75rem; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:2.5rem; margin-bottom:1rem;">🍳</div>
+            <div style="font-size:0.8rem; font-weight:800; color:#16a34a; text-transform:uppercase; margin-bottom:0.4rem;">Step 1</div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">Donor Lists Surplus</h3>
+            <p style="font-size:0.85rem; color:#64748b; line-height:1.5;">
+              Mess warden, hotel chef, or event manager posts surplus food details with servings, packaging type, and safe pickup deadline in under 60 seconds.
+            </p>
+          </div>
+
+          <div style="background:#f8fafc; border-radius:1.5rem; padding:1.75rem; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:2.5rem; margin-bottom:1rem;">📡</div>
+            <div style="font-size:0.8rem; font-weight:800; color:#16a34a; text-transform:uppercase; margin-bottom:0.4rem;">Step 2</div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">Live Radar Alert</h3>
+            <p style="font-size:0.85rem; color:#64748b; line-height:1.5;">
+              Surplus batch instantly appears on the real-time Leaflet map. Nearby NGOs, food banks, and student volunteer brigades receive alert radar beacons.
+            </p>
+          </div>
+
+          <div style="background:#f8fafc; border-radius:1.5rem; padding:1.75rem; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:2.5rem; margin-bottom:1rem;">🔐</div>
+            <div style="font-size:0.8rem; font-weight:800; color:#16a34a; text-transform:uppercase; margin-bottom:0.4rem;">Step 3</div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">Claim &amp; Secure OTP</h3>
+            <p style="font-size:0.85rem; color:#64748b; line-height:1.5;">
+              Volunteer claims the pickup, inputs vehicle and ETA, and receives a digital 4-digit verification code. The donor verifies this code upon handover.
+            </p>
+          </div>
+
+          <div style="background:#f8fafc; border-radius:1.5rem; padding:1.75rem; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:2.5rem; margin-bottom:1rem;">✨</div>
+            <div style="font-size:0.8rem; font-weight:800; color:#16a34a; text-transform:uppercase; margin-bottom:0.4rem;">Step 4</div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">Safe Redistribution</h3>
+            <p style="font-size:0.85rem; color:#64748b; line-height:1.5;">
+              Meals reach shelter homes, street families, or campus night staff while piping hot and within the FSSAI safety window. Zero edible waste!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials & Real Partners -->
+    <section class="container" style="padding:4rem 0;">
+      <div class="section-header">
+        <span class="section-tag">Voices of Change</span>
+        <h2 class="section-title">Community Experiences</h2>
+        <p class="section-subtitle">What mess supervisors, NGO directors, and student leaders say about FoodLoop.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+        <div style="background:#fff; border-radius:1.5rem; padding:1.75rem; border:1.5px solid #e2e8f0; box-shadow:var(--shadow-sm);">
+          <p style="font-size:0.95rem; color:#334155; font-style:italic; margin-bottom:1.25rem;">
+            "In our 1,200-student hostel mess, surplus biryani and dal used to cause genuine heartbreak. With FoodLoop, our kitchen staff posts excess food in 30 seconds and volunteers arrive before it even cools down."
+          </p>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="width:40px; height:40px; border-radius:50%; background:#dcfce7; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#166534;">RS</div>
+            <div>
+              <div style="font-weight:700; color:#0f172a; font-size:0.9rem;">Prof. Rajesh Sharma</div>
+              <div style="font-size:0.75rem; color:#64748b;">Chief Mess Warden, Campus Hostels</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-radius:1.5rem; padding:1.75rem; border:1.5px solid #e2e8f0; box-shadow:var(--shadow-sm);">
+          <p style="font-size:0.95rem; color:#334155; font-style:italic; margin-bottom:1.25rem;">
+            "The 4-digit OTP handover mechanism gives our shelter complete trust that food has been tracked responsibly from origin to beneficiary. It’s light years ahead of informal WhatsApp groups."
+          </p>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="width:40px; height:40px; border-radius:50%; background:#fef3c7; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#92400e;">SR</div>
+            <div>
+              <div style="font-weight:700; color:#0f172a; font-size:0.9rem;">Sunita Rao</div>
+              <div style="font-size:0.75rem; color:#64748b;">Founder, Roshni Child Welfare Trust</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff; border-radius:1.5rem; padding:1.75rem; border:1.5px solid #e2e8f0; box-shadow:var(--shadow-sm);">
+          <p style="font-size:0.95rem; color:#334155; font-style:italic; margin-bottom:1.25rem;">
+            "As engineering students, seeing the interactive OpenStreetMap live radar showing meals within cycling distance turned food rescue into an inspiring campus movement."
+          </p>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="width:40px; height:40px; border-radius:50%; background:#e0f2fe; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#075985;">AP</div>
+            <div>
+              <div style="font-weight:700; color:#0f172a; font-size:0.9rem;">Arjun Patel</div>
+              <div style="font-size:0.75rem; color:#64748b;">Lead, Youth Rescue Brigade</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       VIEW: DONOR PORTAL (My Food Postings & Verify Handover OTP)
+       ========================================================================== -->
+  <main id="viewDonor" style="display:none; padding:3rem 0;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <span class="section-tag">Donor Management Console</span>
+          <h1 style="font-size:2rem; font-weight:800; color:#0f172a;">My Surplus Food Donations</h1>
+          <p style="color:#64748b; font-size:0.9rem;">Track all active and past food batches posted from your facility.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openDonateModal()">
+          ➕ List New Surplus Food
+        </button>
+      </div>
+
+      <div id="myDonationsList">
+        <!-- Rendered by donor.js -->
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       VIEW: VOLUNTEER & NGO PORTAL (My Claimed Pickups & Routing)
+       ========================================================================== -->
+  <main id="viewVolunteer" style="display:none; padding:3rem 0;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <span class="section-tag">NGO &amp; Volunteer Hub</span>
+          <h1 style="font-size:2rem; font-weight:800; color:#0f172a;">Active Rescues &amp; Claimed Pickups</h1>
+          <p style="color:#64748b; font-size:0.9rem;">Present your 4-digit OTP at pickup and record successful distribution to shelter homes.</p>
+        </div>
+        <button class="btn btn-outline" onclick="switchMainTab('explore')">
+          🔍 Find More Surplus Food
+        </button>
+      </div>
+
+      <div id="myClaimsList">
+        <!-- Rendered by claim.js -->
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       VIEW: ADMIN CONSOLE (Platform Governance & Project Viva Center)
+       ========================================================================== -->
+  <main id="viewAdmin" style="display:none; padding:3rem 0;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <span class="section-tag">Platform Governance</span>
+          <h1 style="font-size:2rem; font-weight:800; color:#0f172a;">Administrator &amp; Moderation Center</h1>
+          <p style="color:#64748b; font-size:0.9rem;">System oversight, registered entities, audit trails, and project viva analytics.</p>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="exportDonationsCSV()">
+            📊 Export CSV Report
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="handleResetToDemo()">
+            🔄 Reset Demo Database
+          </button>
+          <button class="btn btn-accent btn-sm" onclick="openProjectSpecsModal()">
+            📋 IP Project Viva Specs
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metric Snapshot Cards -->
+      <div class="impact-grid" style="margin-bottom:2.5rem;">
+        <div class="impact-card">
+          <div class="impact-number" id="adminStatMeals">--</div>
+          <div class="impact-label">Total Servings Rescued</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-number" id="adminStatKg">--</div>
+          <div class="impact-label">Total Surplus Food</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-number" id="adminStatDonations">--</div>
+          <div class="impact-label">Donation Batches</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-number" id="adminStatCo2">--</div>
+          <div class="impact-label">CO₂e Averted</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-number" id="adminStatUsers">--</div>
+          <div class="impact-label">Active Platform Users</div>
+        </div>
+      </div>
+
+      <!-- Live Status Distribution Breakdown -->
+      <div style="background:#fff; border-radius:1.5rem; padding:1.5rem; border:1px solid #e2e8f0; margin-bottom:2rem;">
+        <h3 style="font-size:1.1rem; font-weight:800; color:#0f172a; margin-bottom:1rem;">Donation Pipeline Status Distribution</h3>
+        <div id="adminStatusBreakdown" style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <!-- Injected by admin.js -->
+        </div>
+      </div>
+
+      <!-- Registered Users Directory Table -->
+      <div style="background:#fff; border-radius:1.5rem; padding:1.5rem; border:1px solid #e2e8f0; margin-bottom:2rem;">
+        <h3 style="font-size:1.1rem; font-weight:800; color:#0f172a; margin-bottom:1rem;">Registered Entities &amp; Stakeholders</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name &amp; Email</th>
+                <th>Role</th>
+                <th>Organization</th>
+                <th>Phone</th>
+                <th>Activity</th>
+                <th>Compliance Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody">
+              <!-- Injected by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- System Real-time Audit Trail -->
+      <div style="background:#fff; border-radius:1.5rem; padding:1.5rem; border:1px solid #e2e8f0;">
+        <h3 style="font-size:1.1rem; font-weight:800; color:#0f172a; margin-bottom:1rem;">System Audit Trail &amp; Event Logs</h3>
+        <div id="adminAuditLogsList" style="max-height:350px; overflow-y:auto;">
+          <!-- Injected by admin.js -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       VIEW: FOOD SAFETY & FSSAI COMPLIANCE GUIDELINES
+       ========================================================================== -->
+  <main id="viewSafety" style="display:none; padding:3rem 0;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Quality Assurance</span>
+        <h2 class="section-title">Food Safety &amp; Redistribution Protocol</h2>
+        <p class="section-subtitle">FoodLoop strictly adheres to the Food Safety and Standards Authority of India (FSSAI) Surplus Food Regulations.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem;">
+        <div style="background:#fff; border-radius:1.5rem; padding:2rem; border:1px solid #e2e8f0;">
+          <div style="font-size:2rem; margin-bottom:0.75rem;">🌡️</div>
+          <h3 style="font-size:1.2rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">Temperature Control</h3>
+          <p style="font-size:0.875rem; color:#475569; line-height:1.6;">
+            Cooked hot meals must be kept above <strong>60°C</strong> in insulated thermal vessels. Perishable cold food or dairy items must be stored below <strong>5°C</strong> at all times during storage and transport.
+          </p>
+        </div>
+
+        <div style="background:#fff; border-radius:1.5rem; padding:2rem; border:1px solid #e2e8f0;">
+          <div style="font-size:2rem; margin-bottom:0.75rem;">⏱️</div>
+          <h3 style="font-size:1.2rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">The 4-Hour Rule</h3>
+          <p style="font-size:0.875rem; color:#475569; line-height:1.6;">
+            Cooked surplus food must be collected and consumed within <strong>4 hours</strong> of preparation unless professionally blast chilled. The platform countdown automatically locks unpicked food at the deadline.
+          </p>
+        </div>
+
+        <div style="background:#fff; border-radius:1.5rem; padding:2rem; border:1px solid #e2e8f0;">
+          <div style="font-size:2rem; margin-bottom:0.75rem;">📦</div>
+          <h3 style="font-size:1.2rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">Hygienic Packaging</h3>
+          <p style="font-size:0.875rem; color:#475569; line-height:1.6;">
+            All donations must be sealed in clean, food-grade containers or biodegradable bagasse meal boxes. Rescuers carrying their own containers must ensure food-grade sanitization.
+          </p>
+        </div>
+
+        <div style="background:#fff; border-radius:1.5rem; padding:2rem; border:1px solid #e2e8f0;">
+          <div style="font-size:2rem; margin-bottom:0.75rem;">👃</div>
+          <h3 style="font-size:1.2rem; font-weight:800; color:#0f172a; margin-bottom:0.5rem;">Sensory Verification</h3>
+          <p style="font-size:0.875rem; color:#475569; line-height:1.6;">
+            Before entering the 4-digit handover OTP, volunteers conduct a visual, aroma, and texture inspection. Any food exhibiting sourness or surface moisture must be responsibly composted.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       MODAL: FOOD DONATION FORM (Working Full Fields + Leaflet Picker)
+       ========================================================================== -->
+  <div class="modal-overlay" id="donateModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">🍲 Post Food Surplus for Rescue</h3>
+        <button class="modal-close-btn" onclick="closeDonateModal()">✕</button>
+      </div>
+
+      <form id="donationForm" onsubmit="handleDonationSubmit(event)">
+        <div class="modal-body">
+
+          <!-- Basic Food Details -->
+          <div class="form-group">
+            <label class="form-label">Food Title / Name *</label>
+            <input type="text" id="donationTitle" class="form-control" placeholder="e.g. 50 Veg Biryani Meal Boxes with Raita" required>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select id="donationCategory" class="form-control" required>
+                <option value="rice_biryani">🍚 Rice, Biryani &amp; Pulao</option>
+                <option value="roti_breads">🫓 Chapati, Roti &amp; Naan</option>
+                <option value="curry_dal">🍲 Dal, Curry &amp; Sambar</option>
+                <option value="breakfast_tiffin">🥞 Idli, Dosa &amp; Breakfast</option>
+                <option value="meal_boxes">🍱 Veg &amp; Non-Veg Meal Boxes</option>
+                <option value="fruits_veggies">🍎 Fruits &amp; Fresh Vegetables</option>
+                <option value="bakery_desserts">🥐 Bread, Cakes &amp; Bakery</option>
+                <option value="packaged_snacks">🥨 Packaged Snacks &amp; Sealed</option>
+                <option value="dairy_beverages">🥛 Milk, Dairy &amp; Drinks</option>
+                <option value="event_surplus">🎊 Wedding &amp; Banquet Surplus</option>
+                <option value="hostel_canteen">🎓 Hostel &amp; Canteen Meals</option>
+                <option value="dry_groceries">🌾 Dry Groceries &amp; Staples</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Dietary Type *</label>
+              <select id="donationDietary" class="form-control" required>
+                <option value="veg">🥬 Vegetarian</option>
+                <option value="non_veg">🍗 Non-Vegetarian</option>
+                <option value="vegan">🌱 Vegan</option>
+                <option value="egg">🥚 Contains Egg</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Storage Condition *</label>
+              <select id="donationStorage" class="form-control" required>
+                <option value="hot_insulated">♨️ Hot Insulated (&gt;60°C)</option>
+                <option value="room_temp">🌡️ Room Temperature</option>
+                <option value="refrigerated">❄️ Refrigerated (&lt;5°C)</option>
+                <option value="frozen">🧊 Deep Frozen</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quantity, Servings & Timing -->
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Quantity &amp; Unit *</label>
+              <div style="display:flex; gap:0.5rem;">
+                <input type="number" id="donationQuantity" class="form-control" placeholder="Qty" min="1" step="0.5" value="25" required>
+                <select id="donationUnit" class="form-control" style="width:110px;">
+                  <option value="kg">kg</option>
+                  <option value="meals">meals</option>
+                  <option value="boxes">boxes</option>
+                  <option value="packets">packets</option>
+                  <option value="litres">litres</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Approx Servings (People Fed) *</label>
+              <input type="number" id="donationServings" class="form-control" placeholder="e.g. 50" min="1" value="50" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Preparation Time *</label>
+              <input type="datetime-local" id="donationCookedTime" class="form-control" required>
+            </div>
+          </div>
+
+          <!-- Safe Expiry Deadline with Quick Buttons -->
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+              <label class="form-label" style="margin:0;">Safe Pickup Deadline (Expiry Time) *</label>
+              <div style="display:flex; gap:0.35rem;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="setDeadlineOffset(2)">+2h</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="setDeadlineOffset(4)">+4h</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="setDeadlineOffset(6)">+6h</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="setDeadlineOffset(12)">+12h</button>
+              </div>
+            </div>
+            <input type="datetime-local" id="donationExpiryTime" class="form-control" required>
+            <div class="form-help">Set accurate time before which the food is guaranteed safe for consumption.</div>
+          </div>
+
+          <!-- Allergens & Packaging -->
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Allergen Information</label>
+              <input type="text" id="donationAllergens" class="form-control" placeholder="e.g. Contains Dairy, Peanuts, Gluten">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Packaging Type</label>
+              <input type="text" id="donationPackaging" class="form-control" placeholder="e.g. Packed in Foil Trays / Bring Vessels">
+            </div>
+          </div>
+
+          <!-- Donor Details -->
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Donor Name / Contact Person *</label>
+              <input type="text" id="donorName" class="form-control" placeholder="Contact Person" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Organization / Business</label>
+              <input type="text" id="donorOrg" class="form-control" placeholder="e.g. Campus Hostel Mess">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Donor Type *</label>
+              <select id="donorType" class="form-control" required>
+                <option value="hostel_mess">🎓 College Hostel Mess</option>
+                <option value="restaurant">🍽️ Restaurant / Fine Dine</option>
+                <option value="wedding_hall">🎊 Wedding &amp; Banquet Hall</option>
+                <option value="bakery">🥐 Bakery &amp; Confectionery</option>
+                <option value="corporate_canteen">🏢 Corporate Canteen</option>
+                <option value="household">🏡 Individual Household</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Contact Phone *</label>
+              <input type="tel" id="donorPhone" class="form-control" placeholder="+91 98765 43210" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">City *</label>
+              <input type="text" id="donationCity" class="form-control" value="Bangalore" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Pickup Address *</label>
+            <input type="text" id="donationAddress" class="form-control" placeholder="Gate number, building, landmark..." required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Specific Pickup Instructions</label>
+            <textarea id="donationInstructions" class="form-control" rows="2" placeholder="e.g. Use the service ramp at kitchen gate 2. Call supervisor upon arrival."></textarea>
+          </div>
+
+          <!-- Interactive Leaflet Map Coordinate Picker -->
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-label" style="margin:0;">📍 Pin Location on Leaflet Map (Drag pin or click)</label>
+              <button type="button" class="btn btn-outline btn-sm" onclick="useGpsInForm()">
+                🎯 Use Current GPS
+              </button>
+            </div>
+            <div id="formMapPicker"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.4rem; font-size:0.775rem; color:#64748b;">
+              <span id="coordDisplay">Lat: 12.97160, Lng: 77.59460</span>
+              <span>Click anywhere on the map above to accurately reposition the rescue pin</span>
+            </div>
+            <input type="hidden" id="donationLat">
+            <input type="hidden" id="donationLng">
+          </div>
+
+          <!-- Food Image Preset Selector -->
+          <div class="form-group">
+            <label class="form-label">Appetizing Food Photo (Select Preset or Provide Image URL)</label>
+            <div class="image-preset-grid" id="photoPresetContainer">
+              <!-- Rendered by donor.js -->
+            </div>
+            <input type="url" id="donationImageUrl" class="form-control" style="margin-top:0.5rem;" placeholder="Or paste direct image URL (Unsplash, imgur, etc.)">
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeDonateModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-lg">
+            🚀 Submit Food Donation to Radar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: CLAIM FOOD (For NGO & Volunteers with ETA & Vehicle)
+       ========================================================================== -->
+  <div class="modal-overlay" id="claimModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">🤝 Request Food Pickup</h3>
+        <button class="modal-close-btn" onclick="closeClaimModal()">✕</button>
+      </div>
+
+      <form id="claimForm" onsubmit="handleClaimSubmit(event)">
+        <div class="modal-body">
+          <div id="claimDonationSummary">
+            <!-- Injected by claim.js -->
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Your Name *</label>
+              <input type="text" id="claimantName" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Organization / Group *</label>
+              <input type="text" id="claimantOrg" class="form-control" placeholder="e.g. Roshni Food Rescue Brigade" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Contact Phone *</label>
+              <input type="tel" id="claimantPhone" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Vehicle Type *</label>
+              <select id="claimVehicle" class="form-control" required>
+                <option value="two_wheeler">🛵 Two-Wheeler / Bike</option>
+                <option value="three_wheeler">🛺 Auto / E-Rickshaw</option>
+                <option value="van_truck">🚐 Delivery Van / Mini Cargo</option>
+                <option value="walking">🚶 On Foot / Bicycle (Nearby)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Estimated Time of Arrival (ETA) *</label>
+              <select id="claimEta" class="form-control" required>
+                <option value="15">⚡ 15 Minutes</option>
+                <option value="30" selected>⏱️ 30 Minutes</option>
+                <option value="45">⏱️ 45 Minutes</option>
+                <option value="60">⏱️ 60 Minutes (Max)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Intended Beneficiary *</label>
+              <select id="claimBeneficiary" class="form-control" required>
+                <option value="slum_shelter">🏘️ Slum Cluster &amp; Homeless</option>
+                <option value="orphanage">👶 Child Welfare / Orphanage</option>
+                <option value="elderly_home">👴 Senior Citizens Shelter</option>
+                <option value="night_shelter">🌙 Municipal Night Shelter</option>
+                <option value="community_kitchen">🍲 Community Free Kitchen</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Pickup Notes &amp; Vessel Details</label>
+            <textarea id="claimNotes" class="form-control" rows="2" placeholder="e.g. Carrying two 30L food grade insulated containers. Will arrive at service gate."></textarea>
+          </div>
+
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:0.75rem; padding:0.75rem 1rem; font-size:0.8rem; color:#065f46;">
+            🔒 <strong>Verification Policy:</strong> Claiming generates a unique 4-digit OTP. You must present this OTP to the donor at the physical pickup point to confirm handover.
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeClaimModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            ✅ Confirm Pickup &amp; Generate OTP
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: DIGITAL PASS & OTP DISPATCH SLIP
+       ========================================================================== -->
+  <div class="modal-overlay" id="digitalPassModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">🎫 Digital Food Rescue Pass</h3>
+        <button class="modal-close-btn" onclick="closeDigitalPassModal()">✕</button>
+      </div>
+      <div class="modal-body" id="digitalPassContent">
+        <!-- Injected by claim.js -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="window.print()">🖨️ Print Dispatch Pass</button>
+        <button class="btn btn-primary" onclick="closeDigitalPassModal()">Got It, Proceed to Pickup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: 1-CLICK ROLE SWITCHER (For Instant Viva Demonstration)
+       ========================================================================== -->
+  <div class="modal-overlay" id="roleSwitcherModal">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title">⚡ Fast Demo Role Switcher</h3>
+        <button class="modal-close-btn" onclick="closeRoleSwitcherModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.85rem; color:#64748b; margin-bottom:1.25rem;">
+          Select any persona to immediately experience FoodLoop from their perspective without entering passwords:
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <button class="btn btn-outline" style="justify-content:flex-start; text-align:left; padding:0.85rem;" onclick="switchDemoRole('donor'); closeRoleSwitcherModal();">
+            <span style="font-size:1.5rem; margin-right:0.75rem;">🍳</span>
+            <div>
+              <div style="font-weight:700; color:#0f172a;">Mess Warden / Food Donor</div>
+              <div style="font-size:0.75rem; color:#64748b;">Post surplus meals, verify OTP handover</div>
+            </div>
+          </button>
+
+          <button class="btn btn-outline" style="justify-content:flex-start; text-align:left; padding:0.85rem;" onclick="switchDemoRole('ngo'); closeRoleSwitcherModal();">
+            <span style="font-size:1.5rem; margin-right:0.75rem;">🤝</span>
+            <div>
+              <div style="font-weight:700; color:#0f172a;">NGO Partner Director</div>
+              <div style="font-size:0.75rem; color:#64748b;">Bulk claims, distribution logs, shelter welfare</div>
+            </div>
+          </button>
+
+          <button class="btn btn-outline" style="justify-content:flex-start; text-align:left; padding:0.85rem;" onclick="switchDemoRole('volunteer'); closeRoleSwitcherModal();">
+            <span style="font-size:1.5rem; margin-right:0.75rem;">🚴</span>
+            <div>
+              <div style="font-weight:700; color:#0f172a;">Student / Citizen Volunteer</div>
+              <div style="font-size:0.75rem; color:#64748b;">Rapid pickup, bike navigation, live OTP pass</div>
+            </div>
+          </button>
+
+          <button class="btn btn-outline" style="justify-content:flex-start; text-align:left; padding:0.85rem;" onclick="switchDemoRole('admin'); closeRoleSwitcherModal();">
+            <span style="font-size:1.5rem; margin-right:0.75rem;">👑</span>
+            <div>
+              <div style="font-weight:700; color:#0f172a;">System Administrator</div>
+              <div style="font-size:0.75rem; color:#64748b;">Full audit trails, metrics, CSV export, moderation</div>
+            </div>
+          </button>
+
+          <button class="btn btn-outline" style="justify-content:flex-start; text-align:left; padding:0.85rem; border-color:#fecdd3; background:#fff1f2;" onclick="switchDemoRole('guest'); closeRoleSwitcherModal();">
+            <span style="font-size:1.5rem; margin-right:0.75rem;">👤</span>
+            <div>
+              <div style="font-weight:700; color:#b91c1c;">Guest Visitor (Logged Out)</div>
+              <div style="font-size:0.75rem; color:#e11d48;">Public homepage &amp; radar view</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: LOGIN & REGISTRATION
+       ========================================================================== -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title" id="authModalTitle">Sign In</h3>
+        <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="loginFormWrapper" class="modal-body">
+        <form onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="loginEmail" class="form-control" value="donor@foodloop.org" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="loginPassword" class="form-control" value="donor123" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:0.5rem;">
+            Sign In
+          </button>
+        </form>
+
+        <div style="margin-top:1.25rem; text-align:center; font-size:0.85rem; color:#64748b;">
+          Don't have an account? 
+          <a href="javascript:void(0)" onclick="openAuthModal('register')" style="color:#16a34a; font-weight:700;">Register here</a>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerFormWrapper" class="modal-body" style="display:none;">
+        <form onsubmit="handleRegisterSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" id="regName" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address *</label>
+            <input type="email" id="regEmail" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password *</label>
+            <input type="password" id="regPassword" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Role *</label>
+            <select id="regRole" class="form-control" required>
+              <option value="donor">🍳 Food Donor (Mess / Restaurant / Banquet)</option>
+              <option value="ngo">🤝 NGO Partner / Shelter</option>
+              <option value="volunteer" selected>🚴 Volunteer Rescuer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Organization Name</label>
+            <input type="text" id="regOrg" class="form-control" placeholder="Hostel Mess / NGO Trust">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number *</label>
+            <input type="tel" id="regPhone" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <input type="text" id="regAddress" class="form-control" placeholder="Street / Campus Gate">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:0.5rem;">
+            Create Account
+          </button>
+        </form>
+
+        <div style="margin-top:1.25rem; text-align:center; font-size:0.85rem; color:#64748b;">
+          Already have an account? 
+          <a href="javascript:void(0)" onclick="openAuthModal('login')" style="color:#16a34a; font-weight:700;">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: IP PROJECT VIVA BRIEFING & ARCHITECTURE
+       ========================================================================== -->
+  <div class="modal-overlay" id="projectSpecsModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">🎓 IP Project Evaluation &amp; Viva Briefing</h3>
+        <button class="modal-close-btn" onclick="closeProjectSpecsModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:#f4fbf7; border:1.5px solid #a7f3d0; border-radius:1rem; padding:1.25rem; margin-bottom:1.5rem;">
+          <h4 style="font-size:1.1rem; font-weight:800; color:#064e3b; margin-bottom:0.35rem;">Project: FoodLoop — Smart Food Rescue Platform</h4>
+          <p style="font-size:0.875rem; color:#166534;">
+            <strong>Course:</strong> B.Tech Internet Programming (IP) Laboratory Project<br>
+            <strong>Domain:</strong> Web Applications, Geolocation Routing, Hyper-Local Logistics &amp; SDG 12 (Responsible Consumption)
+          </p>
+        </div>
+
+        <h4 style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:0.75rem;">1. Full Stack Architecture</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; font-size:0.85rem; margin-bottom:1.5rem;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:0.75rem; padding:1rem;">
+            <strong style="color:#0f172a;">Frontend Architecture:</strong>
+            <ul style="margin-top:0.4rem; padding-left:1.25rem; color:#475569; line-height:1.6;">
+              <li>Responsive Single Page Application (SPA)</li>
+              <li>Real Interactive <strong>Leaflet.js + OpenStreetMap</strong></li>
+              <li>Zero Google Maps Paid Key Dependency</li>
+              <li>Glassmorphism, CSS Custom Properties &amp; Micro-interactions</li>
+            </ul>
+          </div>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:0.75rem; padding:1rem;">
+            <strong style="color:#0f172a;">Backend &amp; Persistence:</strong>
+            <ul style="margin-top:0.4rem; padding-left:1.25rem; color:#475569; line-height:1.6;">
+              <li>Node.js Native REST API Server (Zero NPM fragility)</li>
+              <li>Embedded <strong>SQLite (`foodloop.db`)</strong> with WAL mode</li>
+              <li>ACID Compliant Transactions &amp; Foreign Keys</li>
+              <li>Role-Based Access Control (RBAC) &amp; Audit Logs</li>
+            </ul>
+          </div>
+        </div>
+
+        <h4 style="font-size:1rem; font-weight:800; color:#0f172a; margin-bottom:0.75rem;">2. Key Technical Innovations for Viva Demonstration</h4>
+        <ol style="font-size:0.85rem; color:#475569; padding-left:1.25rem; line-height:1.7; margin-bottom:1.5rem;">
+          <li><strong>Interactive Map Dual Synchronization:</strong> Clicking map markers auto-scrolls and highlights listing cards, and vice versa.</li>
+          <li><strong>Digital Handover Protocol:</strong> Generates a cryptographically random 4-digit OTP upon claiming. Handover cannot complete until donor verifies the volunteer's code.</li>
+          <li><strong>Real-time Expiry Clocks:</strong> Dynamic recalculation of safe consumption windows with automated urgent alerts when &lt; 2.5 hours remain.</li>
+          <li><strong>FSSAI Compliance Engine:</strong> Built-in temperature and packaging verification checklist.</li>
+        </ol>
+
+        <div style="text-align:right;">
+          <button class="btn btn-primary" onclick="closeProjectSpecsModal()">Close Briefing</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+            <div style="width:2rem; height:2rem; background:#10b981; border-radius:0.5rem; display:flex; align-items:center; justify-content:center; color:#fff;">🌿</div>
+            <h3 style="margin:0;">FoodLoop</h3>
+          </div>
+          <p>
+            Good Food. No Waste. An Internet Programming initiative empowering college campuses and urban food communities to eliminate hunger and landfill methane.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform Navigation</h4>
+          <ul>
+            <li><a href="javascript:void(0)" onclick="switchMainTab('explore')">Surplus Food Radar</a></li>
+            <li><a href="javascript:void(0)" onclick="openDonateModal()">List Food Donation</a></li>
+            <li><a href="javascript:void(0)" onclick="switchDemoRole('volunteer')">Volunteer Network</a></li>
+            <li><a href="javascript:void(0)" onclick="switchDemoRole('ngo')">NGO Partnership</a></li>
+            <li><a href="javascript:void(0)" onclick="switchMainTab('safety')">FSSAI Safety Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>IP Project Center</h4>
+          <ul>
+            <li><a href="javascript:void(0)" onclick="openProjectSpecsModal()">Project Viva Specs</a></li>
+            <li><a href="javascript:void(0)" onclick="switchDemoRole('admin')">Admin Audit Logs</a></li>
+            <li><a href="javascript:void(0)" onclick="exportDonationsCSV()">Export Data (CSV)</a></li>
+            <li><a href="javascript:void(0)" onclick="openRoleSwitcherModal()">Persona Switcher</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contact &amp; Emergency Hub</h4>
+          <p style="color:#a7f3d0; font-size:0.85rem; line-height:1.6;">
+            📍 Campus Innovation Center, NIT Campus<br>
+            📞 Emergency Surplus Line: +91 98765 00000<br>
+            ✉️ pilot@foodloop.org
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 FoodLoop — Good Food. No Waste. Developed for B.Tech Internet Programming (IP) Project.
+        </div>
+        <div style="display:flex; gap:1rem;">
+          <span>Zero Paid API Keys</span> • 
+          <span>Leaflet + OpenStreetMap</span> • 
+          <span>Node.js + SQLite REST</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Helpers Script -->
+  <script>
+    function openProjectSpecsModal() {
+      const m = document.getElementById('projectSpecsModal');
+      if (m) m.classList.add('active');
+    }
+    function closeProjectSpecsModal() {
+      const m = document.getElementById('projectSpecsModal');
+      if (m) m.classList.remove('active');
+    }
+  </script>
+
+  <!-- Leaflet Map JS Engine -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Application Logic Modules -->
+  <script src="js/map.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/donor.js"></script>
+  <script src="js/claim.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

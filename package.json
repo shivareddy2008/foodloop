@@ -1,0 +1,24 @@
+{
+  "name": "foodloop-platform",
+  "version": "1.0.0",
+  "description": "FoodLoop - Good Food. No Waste. Smart Food Rescue Platform for B.Tech Internet Programming (IP) Project",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "food-rescue",
+    "zero-waste",
+    "leaflet",
+    "openstreetmap",
+    "sqlite",
+    "internet-programming",
+    "btech-project"
+  ],
+  "author": "FoodLoop Team",
+  "license": "MIT"
+}
